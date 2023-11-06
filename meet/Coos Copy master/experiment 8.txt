@@ -1,0 +1,153 @@
+                           experiment 8
+
+Objectives: To write a C/C++ program to simulate disk scheduling algorithms 
+Description:
+One of the responsibilities of the operating system is to use the hardware efficiently. For the disk drives, meeting this responsibility entails having fast access time and large disk bandwidth. Both the access time and the bandwidth can be improved by managing the order in which disk I/O requests are serviced which is called as disk scheduling. The simplest form of disk scheduling is, of course, the first-come, firstserved (FCFS) algorithm. This algorithm is intrinsically fair, but it generally does not provide the fastest service. In the SCAN algorithm, the disk arm starts at one end, and moves towards the other end, servicing requests as it reaches each cylinder, until it gets to the other end of the disk. At the other end, the direction of head movement is reversed, and servicing continues. The head continuously scans back and forth across the disk. C-SCAN is a variant of SCAN designed to provide a more uniform wait time. Like SCAN, C-SCAN moves the head from one end of the disk to the other, servicing requests along the way. When the head reaches the other end, however, it immediately returns to the beginning of the disk without servicing any requests on the return trip
+Program:
+
+Fcfs disk scheduling algorithm Source code:
+#include <iostream> using namespace std; int main() {
+int t[20], n, i, j, tohm[20], tot = 0; float avhm;
+cout << "Enter the number of tracks: "; cin >> n;
+cout << "Enter the tracks to be traversed: "; for (i = 2; i < n + 2; i++)
+cin >> t[i];
+ 
+
+for (i = 1; i < n + 1; i++) { tohm[i] = t[i + 1] - t[i]; if (tohm[i] < 0)
+tohm[i] = tohm[i] * (-1);
+
+}
+
+for (i = 1; i < n + 1; i++) tot += tohm[i];
+avhm = static_cast<float>(tot) / n;
+
+
+cout << "Tracks traversed\t\tDifference between tracks" << endl; for (i = 1; i < n + 1; i++)
+cout << t[i] << "\t\t\t\t\t\t\t\t" << tohm[i] << endl;
+
+
+
+cout << "\nAverage header movements: " << avhm << endl; return 0;
+}
+
+Output:_____________________________________________________________
+ 
+PROGRAM:
+
+Scan disk scheduling algorithm Source code:
+#include <bits/stdc++.h> using namespace std;
+
+int size = 8;
+int disk_size = 200;
+
+void SCAN(int arr[], int head, string direction)
+{
+int seek_count = 0;
+int distance, cur_track; vector<int> left, right; vector<int> seek_sequence;
+
+if (direction == "left") left.push_back(0);
+else if (direction == "right") right.push_back(disk_size - 1);
+ 
+
+
+for (int i = 0; i < size; i++) { if (arr[i] < head)
+left.push_back(arr[i]); if (arr[i] > head)
+right.push_back(arr[i]);
+}
+
+sort(left.begin(), left.end());
+sort(right.begin(), right.end());
+
+int run = 2; while (run--) {
+if (direction == "left") {
+for (int i = left.size() - 1; i >= 0; i--) { cur_track = left[i]; seek_sequence.push_back(cur_track); distance = abs(cur_track - head); seek_count += distance;
+head = cur_track;
+}
+direction = "right";
+}
+else if (direction == "right") {
+for (int i = 0; i < right.size(); i++) { cur_track = right[i]; seek_sequence.push_back(cur_track); distance = abs(cur_track - head); seek_count += distance;
+head = cur_track;
+}
+direction = "left";
+}
+}
+
+cout << "Total number of seek operations = " << seek_count << endl; cout << "Seek Sequence is" << endl;
+for (int i = 0; i < seek_sequence.size(); i++) { cout << seek_sequence[i] << endl;
+ 
+}
+}
+
+int main()
+{
+int arr[size] = {176, 79, 34, 60, 92, 11, 41, 114};
+int head = 50;
+string direction = "left"; SCAN(arr, head, direction); return 0;
+}
+Output:_____________________________________________________________
+
+
+Program:
+
+C-scan disk scheduling algorithm:
+
+Program:
+#include <iostream> using namespace std;
+
+int main() {
+int t[20], d[20], h, n, temp, k, atr[20], tot, p, sum = 0;
+
+cout << "Enter the number of tracks to be traversed: "; cin >> n;
+ 
+
+cout << "Enter the position of the head: "; cin >> h;
+t[0] = 0;
+t[1] = h;
+
+cout << "Enter the total tracks: "; cin >> tot;
+t[2] = tot - 1;
+
+cout << "Enter the tracks:\n"; for (int i = 3; i <= n + 2; i++)
+cin >> t[i];
+
+for (int i = 0; i <= n + 2; i++) {
+for (int j = 0; j <= (n + 2) - i - 1; j++) {
+if (t[j] > t[j + 1]) {
+// Swap t[j] and t[j+1] temp = t[j];
+t[j] = t[j + 1]; t[j + 1] = temp;
+}
+}
+}
+
+int j = 0;
+for (int i = 0; i <= n + 2; i++) { if (t[i] == h) {
+temp = t[j]; t[j] = t[j + 1];
+t[j + 1] = temp; p = 0;
+while (t[j] != tot - 1) { j = i;
+atr[p] = t[j]; j++;
+p++;
+}
+atr[p] = t[j]; p++;
+i = 0;
+while (p != (n + 3) && t[i] != t[h]) {
+ 
+
+atr[p] = t[i]; i++;
+p++;
+}
+for (j = 0; j < n + 2; j++) { if (atr[j] > atr[j + 1])
+d[j] = atr[j] - atr[j + 1]; else
+d[j] = atr[j + 1] - atr[j]; sum += d[j];
+}
+cout << "Total header movements: " << sum << endl;
+cout << "Average is: " << static_cast<float>(sum) / n << endl;
+}
+}
+
+return 0;
+}
+Output:_____________________________________________________________
+
+Conclusion:
+In conclusion, efficient disk scheduling is vital for optimizing hardware utilization in operating systems. While the first-come, first-served (FCFS) algorithm is fair, it often doesn't provide the fastest service. The SCAN algorithm improves access time and bandwidth by moving the disk arm back and forth across the disk. The C-SCAN variant offers a more uniform wait time by immediately returning to the disk's beginning after reaching the other end, without servicing any requests on the return trip. The choice of disk scheduling algorithm depends on the specific performance requirements of the system.

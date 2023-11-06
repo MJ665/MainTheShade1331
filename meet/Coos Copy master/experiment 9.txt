@@ -1,0 +1,161 @@
+                             experiment 9
+AIM: To implement Booth's Multiplication on binary numbers in C/C++
+
+DESCRIPTION:
+Booth's multiplication algorithm is an efficient method for multiplying two binary numbers, especially when one or both numbers are signed integers. It was developed by Andrew D. Booth in 1950 and is particularly useful for reducing the number of partial products that need to be added together during binary multiplication. The algorithm works by detecting patterns in the binary representations of the numbers being multiplied and using this information to optimize the multiplication process. Here's a theoretical overview of the Booth's multiplication algorithm:
+1.	Initialization:
+•	Represent the two binary numbers you want to multiply as 'A' (multiplier) and 'B' (multiplicand).
+•	Initialize two registers: 'Q' (quotient) and 'M' (the multiplicand, with an extra bit for sign extension).
+•	Set 'Q' to the binary representation of the multiplier 'A'.
+•	Set 'M' to the binary representation of the multiplicand 'B' and add an extra bit for sign extension (if needed).
+
+2.	Main Algorithm:
+•	While the number of iterations is not equal to the bit length of the binary representation of 'A' (the multiplier), repeat the following steps:
+•	Check the two least significant bits of 'Q':
+•	If 'Q' ends in '00' or '11', do nothing (right shift 'Q' and 'M' one bit).
+•	If 'Q' ends in '01', perform an addition operation: Add 'M' to 'Q' and right shift 'Q' and 'M' one bit.
+•	If 'Q' ends in '10', perform a subtraction operation: Subtract 'M' from 'Q' and right shift 'Q' and 'M' one bit.
+3.	Result Extraction:
+•	After all iterations are complete, the result of the multiplication can be found in 'Q'.
+
+4.	Sign Correction (if needed):
+•	If the original numbers 'A' and 'B' were signed integers, you might need to adjust the sign of the result based on the signs of 'A' and 'B'.
+ 
+
+B
+ooth's algorithm effectively reduces the number of additions required in the multiplication process by using patterns in the binary representation of the multiplier. It's particularly useful in hardware implementations, such as in microprocessors, where efficient multiplication is essential.
+ALGORITHM:
+
+
+SOURCE CODE:
+#include <iostream> #include <cmath>
+
+using namespace std;
+
+int a = 0, b = 0, c = 0, a1 = 0, b1 = 0, com[5] = {1, 0, 0, 0,
+0}; int anum[5] = {0}, anumcp[5] = {0}, bnum[5] = {0};
+int acomp[5] = {0}, bcomp[5] = {0}, pro[5] = {0}, res[5] = {0};
+ 
+ 
+v
+oid binary() {	a1 = abs(a);	b1 = abs(b); int r, r2, i, temp;		for (i = 0; i < 5; i++)
+{	r = a1 % 2;
+a1 = a1 / 2;		r2 = b1 % 2;	b1 = b1 / 2;	anum[i] = r; anumcp[i] = r; bnum[i] = r2;		if (r2 == 0) {
+bcomp[i] =
+1;	}	if (r
+== 0) {
+acomp[i] = 1;
+}
+}
+
+c = 0;	for (i = 0; i < 5; i++)
+{	res[i] = com[i] + bcomp[i]
++ c;	if (res[i] >= 2)
+{	c = 1;	} else
+{	c = 0;	}	res[i]
+= res[i] % 2;
+}	for (i = 4; i >= 0; i--) {		bcomp[i] = res[i];
+}
+
+if (a < 0) {
+= 4; i >= 0; i--) {	c = 0;	for (i
+res[i] =
+0;
+{
++ c;
+{
+{	}	for (i = 0; i < 5; i++) res[i] = com[i] + acomp[i]
+if (res[i] >= 2)
+c = 1;	} else
+c = 0;	}
+res[i] = res[i] % 2;
+}	for (i = 4;
+i >= 0; i--)
+{		anum[i] = res[i]; anumcp[i] = res[i];
+}	}	if (b < 0)
+{	for (i = 0; i < 5; i++) {		temp =
+ 
+
+b
+num[i];	bnum[i] = bcomp[i];
+bcomp[i] =
+temp;
+}
+}
+}
+
+void add(int num[]) {
+int i;	c = 0;		for (i = 0; i < 5; i++) {	res[i] = pro[i] + num[i] + c;		if (res[i] >= 2) {			c =
+1;	} else {	c =
+0;	}
+res[i] = res[i] % 2;
+}
+for (i = 4; i >= 0; i--)
+{	pro[i] = res[i]; cout << pro[i];
+}	cout << ":";
+for (i = 4; i >= 0; i--) { cout <<
+anumcp[i];
+}
+}
+
+void arshift() {
+int temp = pro[4], temp2 = pro[0], i; for (i = 1; i < 5; i++)
+{	pro[i - 1] =
+pro[i];
+}
+pro[4] = temp;	for (i = 1; i < 5; i++) {
+anumcp[i - 1] = anumcp[i];
+}
+anumcp[4] = temp2; cout << "\nAR-SHIFT: "; for (i = 4; i >= 0; i--)
+{	cout << pro[i];
+}	cout << ":";
+for (i = 4; i >= 0; i--) { cout <<
+anumcp[i];
+
+}
+}
+
+int main() { int i, q = 0;
+cout << "\t\tBOOTH'S MULTIPLICATION ALGORITHM" <<
+endl;	cout << "Enter two numbers to multiply: " << endl; cout << "Both must be less than 16" << endl;
+
+do {
+cout << "Enter A: ";	cin >> a;
+cout << "Enter B: "; cin >> b;
+} while (a >= 16 || b >= 16);
+
+cout << "Expected product = " << a * b << endl; binary();
+cout << "\nBinary Equivalents are: " << endl;	cout << "A = ";	for (i = 4; i >= 0; i--) {		cout << anum[i];
+}
+cout << "\nB = "; for (i = 4; i >= 0; i--) {
+cout << bnum[i];
+}
+cout << "\nB'+ 1 = "; for (i = 4; i >= 0; i--)
+{	cout << bcomp[i];
+}
+cout << "\n" << endl;	for (i = 0; i < 5; i++) {		if (anum[i]
+== q) {	cout
+<< "-->";
+arshift();	q = anum[i];
+} else if (anum[i] == 1 && q == 0) { cout << "-->";
+cout << "\nSUB B: "; add(bcomp); arshift();	q =
+anum[i];	} else
+{	cout << "-->";
+ 
+cout << "\nADD B: "; add(bnum); arshift();
+q = anum[i];
+}
+}
+
+cout << "\nProduct is = "; for (i = 4; i >= 0; i--)
+{	cout << pro[i];
+}	for (i = 4; i >= 0; i--) {
+cout << anumcp[i];
+}
+
+return 0; }
+
+OUTPUT:
+Conclusion:
+
+Booth's multiplication algorithm, developed by Andrew D. Booth, is a highly efficient method for multiplying binary numbers, especially signed integers. It optimizes the process by detecting patterns in the binary representation of the numbers being multiplied. The algorithm reduces the number of additions needed and is valuable in hardware implementations like microprocessors for fast multiplication.
